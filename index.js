@@ -12,23 +12,23 @@ var Que=function(args){
 	Que.prototype.plentyQue = function(topic,requests,next) {
 		self.vz.post('que/plenty',{topic:topic,requests:requests,priority:1},next)
 	};
+
 	Que.prototype.poll = function(topic) {
-		var _next=function(){
-			self.poll(topic);
-		}
+		var _next=function(topic){self.poll(topic);}
 		self.vz.post('que/next',{topic:topic},function(d){
-			if(!d){
-                setTimeout(_next,1000*60);
+			if(!d || d.error ){
+				console.log('will try again in 60 seconds');
+                setTimeout(_next,1000*60,topic);
                 return;
             }else{
-				self.emit('found',d,_next);
+				self.emit('found',d);
 			}
 		})
 	};
 	Que.prototype.push = _push;
 	Que.prototype.vz = vz;
 	Que.prototype.storage=function(id,cb){vz.api('util/storage',{id:id},cb);}
-	Que.prototype.profiles=function(info,cb){vz.api('util/profile',info, cb);}
+	Que.prototype.profiles=function(id,cb){vz.get2('util/profile/'+id, cb);}
 	Que.prototype.master=function(info,cb){vz.api('util/master',info, cb);}
 	Que.prototype.vze=function(model,cb){vz.api('util/vze',model,cb);}
 }
