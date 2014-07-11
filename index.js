@@ -1,5 +1,5 @@
 var util = require('util'),
-	VidZapper=require('vidzapper'),
+	VidZapper=require('vz'),
 	EventEmitter = require('events').EventEmitter;
 
 var Que=function(args){
