@@ -7,15 +7,27 @@ var Que=function(args){
 	var self=this;
 	var sending=0,vz = new VidZapper(args.vidzapper);
 	var _push=function(topic,obj,next){
-		self.vz.post('que/new',{topic:topic,request:JSON.stringify(obj),priority:1},next);
+		vz.post('que/new',{topic:topic,request:JSON.stringify(obj),priority:1},next);
 	}
 	Que.prototype.plentyQue = function(topic,requests,next) {
-		self.vz.post('que/plenty',{topic:topic,requests:requests,priority:1},next)
+		vz.post('que/plenty',{topic:topic,requests:requests,priority:1},next)
+	};
+
+	Que.prototype.registerMachine = function(obj) {
+		vz.post('machine/register',obj,function(d){
+			self.emit('register',{who:'machine',entity:d});
+		})
+	};
+
+	Que.prototype.registerAgent = function(obj) {
+		vz.post('agent/register',obj,function(d){
+			self.emit('register',{who:'agent',entity:d});
+		})
 	};
 
 	Que.prototype.poll = function(topic) {
 		var _next=function(topic){self.poll(topic);}
-		self.vz.post('que/next',{topic:topic},function(d){
+		vz.post('que/next',{topic:topic},function(d){
 			if(!d || d.error ){
 				console.log('will try again in 60 seconds');
                 setTimeout(_next,1000*60,topic);
@@ -25,6 +37,7 @@ var Que=function(args){
 			}
 		})
 	};
+
 	Que.prototype.push = _push;
 	Que.prototype.vz = vz;
 	Que.prototype.storage=function(id,cb){vz.api('util/storage',{id:id},cb);}
