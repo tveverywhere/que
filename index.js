@@ -7,6 +7,8 @@ var Que=function(args){
 	var self=this;
 	var sending=0,vz = new VidZapper(args.vidzapper);
 
+	Que.prototype.vz=vz;
+
 	Que.prototype.plentyQue = function(topic,requests,next) {
 		vz.post2('que/plenty',{topic:topic,requests:requests,priority:1},next)
 	};
@@ -21,6 +23,26 @@ var Que=function(args){
 		vz.post2('agent/register',obj,function(d){
 			self.emit('register',{who:'agent',entity:d});
 		})
+	};
+
+	Que.prototype.completed = function(obj,cb) {
+		vz.post2('que/completed',obj,cb);
+	};
+
+	Que.prototype.progress = function(obj,cb) {
+		vz.post2('que/progress',obj,cb);
+	};
+
+	Que.prototype.reply = function(obj,cb) {
+		vz.post2('que/reply',obj,cb);
+	};
+
+	Que.prototype.switch = function(obj,cb) {
+		vz.post2('que/switch',obj,cb);
+	};
+
+	Que.prototype.failed = function(obj,cb) {
+		vz.post2('que/failed',obj,cb);
 	};
 
 	Que.prototype.poll = function(topic) {
@@ -42,7 +64,7 @@ var Que=function(args){
 	Que.prototype.storage=function(id,cb){vz.api2('util/storage',{id:id},cb);}
 	Que.prototype.profiles=function(id,cb){vz.get2('util/profile/'+id, cb);}
 	Que.prototype.master=function(info,cb){vz.api2('util/master',info, cb);}
-	Que.prototype.vze=function(model,cb){vz.api2('util/vze',model,cb);}
+	Que.prototype.vze=function(model,cb){vz.api('util/vze',model,cb);}
 }
 util.inherits(Que, EventEmitter);
 exports = module.exports = function(args) {
