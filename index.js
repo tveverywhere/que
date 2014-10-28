@@ -13,6 +13,10 @@ var Que=function(args){
 		vz.post2('que/plenty',{topic:topic,requests:requests,priority:1},next)
 	};
 
+	Que.prototype.pay = function(text,id,next) {
+		vz.put2('payload/file',{fileid:id,text:text},next);
+	};
+
 	Que.prototype.registerMachine = function(obj) {
 		vz.post2('machine/register',obj,function(d){
 			self.emit('register',{who:'machine',entity:d});
