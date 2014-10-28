@@ -53,7 +53,6 @@ var Que=function(args){
 		var _next=function(topic){self.poll(topic);}
 		vz.post2('que/next',{topic:topic},function(d){
 			if(!d || d.error ){
-				console.log('will try again in 60 seconds');
                 setTimeout(_next,1000*60,topic);
                 return;
             }else{
